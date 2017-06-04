@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
 
         VKRequest vkRequest = new VKApiWall()
-                .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 10));
+                .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 30, VKApiConst.FILTERS, "owner"));
         vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -90,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = (JSONObject) response.json.get("response");
                     System.out.println(jsonObject.toString());
                     JSONArray jsonArray = (JSONArray) jsonObject.get("items");
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                    for (int i = 1 ; i < jsonArray.length(); i++) {
                         JSONObject jobj = (JSONObject) jsonArray.get(i);
-                        stories.add(jobj.getString("text"));
+                        stories.add("Моя история №"  + i
+                                + ": \n " +  jobj.getString("text"));
                     }
 
 
