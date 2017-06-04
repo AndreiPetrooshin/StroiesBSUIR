@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">stories</string>
+    <string name="app_name">Мои истории</string>
     <integer name="com_vk_sdk_AppId">6056664</integer>
     <string name="button_message">messages</string>
     <string name="button_name">Читать истории</string>

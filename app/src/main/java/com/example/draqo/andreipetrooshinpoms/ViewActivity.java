@@ -15,35 +15,35 @@ import java.util.ArrayList;
 
 public class ViewActivity extends AppCompatActivity {
 
-    private LinearLayout linearLayout ;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_activity);
-        linearLayout  = (LinearLayout) findViewById(R.id.linear_stories);
+        linearLayout = (LinearLayout) findViewById(R.id.linear_stories);
         fillLayout();
 
 
     }
 
 
-    private void fillLayout(){
-        ArrayList<String> arrayList =  MainActivity.stories;
-        LinearLayout.LayoutParams layoutParams =  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(10,10,10,50);
-                for (int i = 0; i < arrayList.size(); i++) {
-            if(!arrayList.get(i).equals("")){
+    //Заполнение view_activity.xml элементами.
+    private void fillLayout() {
+        ArrayList<String> arrayList = MainActivity.stories;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(10, 10, 10, 50);
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (!arrayList.get(i).equals("")) {
                 TextView textView = new TextView(getApplicationContext());
                 textView.setTextSize(20f);
-                textView.setShadowLayer(10f,0f,0f, Color.BLACK);
+                textView.setShadowLayer(5f, 0f, 0f, Color.BLACK);
                 textView.setLayoutParams(layoutParams);
                 textView.setText(arrayList.get(i));
                 linearLayout.addView(textView);
             }
         }
     }
-
 
 
 }

@@ -29,20 +29,21 @@ public class MainActivity extends AppCompatActivity {
     private String[] scope = new String[]{VKScope.MESSAGES, VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS};
 
     public static ArrayList<String> stories = new ArrayList<>();
-//    public static ArrayAdapter<String> arrayAdapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Предостовление прав пользователя
         VKSdk.login(this, scope);
 
 
     }
 
 
-    // AUTHORITATHION CODE
+    // Авторизация пользователя
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
@@ -50,21 +51,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResult(VKAccessToken res) {
 // Пользователь успешно авторизовался
                 Toast.makeText(getApplicationContext(), "Authorithation complited...", Toast.LENGTH_SHORT).show();
-//                VKRequest vkRequest = VKApi.friends().get(VKParameters.from(VKApiConst.FIELDS, "first_name", "last_name"));
-//                vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-//                    @Override
-//                    public void onComplete(VKResponse response) {
-//                        super.onComplete(response);
-//
-//
-////                        VKList list = (VKList) response.parsedModel;
-////
-////                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, list);
-////                        listView.setAdapter(arrayAdapter);
-//                    }
-//                });
-
-
             }
 
             @Override
@@ -78,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Обработчик кнопки
     public void onClick(View view) {
 
+        //Отправление запроса на вк сервер
         VKRequest vkRequest = new VKApiWall()
                 .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 30, VKApiConst.FILTERS, "owner"));
         vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
@@ -87,15 +75,16 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 try {
+                    //Чтение JSON объетка
                     JSONObject jsonObject = (JSONObject) response.json.get("response");
-                    System.out.println(jsonObject.toString());
                     JSONArray jsonArray = (JSONArray) jsonObject.get("items");
-                    for (int i = 1 ; i < jsonArray.length(); i++) {
-                        JSONObject jobj = (JSONObject) jsonArray.get(i);
-                        stories.add("Моя история №"  + i
-                                + ": \n " +  jobj.getString("text"));
-                    }
 
+                    //Заполнение списка историями
+                    for (int i = 1; i < jsonArray.length(); i++) {
+                        JSONObject jobj = (JSONObject) jsonArray.get(i);
+                        stories.add("Моя история №" + i
+                                + ": \n " + jobj.getString("text"));
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -103,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        arrayAdapter =  new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_expandable_list_item_1, stories);
+        // Переход на другую активность
         Intent intent = new Intent(MainActivity.this, ViewActivity.class);
         startActivity(intent);
 
