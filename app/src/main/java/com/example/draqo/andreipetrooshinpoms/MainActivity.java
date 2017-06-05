@@ -1,6 +1,8 @@
 package com.example.draqo.andreipetrooshinpoms;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,8 +28,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
 
-    private String[] scope = new String[]{VKScope.MESSAGES, VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS};
-
+    private String[] scope = new String[]{VKScope.WALL};
     public static ArrayList<String> stories = new ArrayList<>();
 
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Предостовление прав пользователя
         VKSdk.login(this, scope);
@@ -50,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResult(VKAccessToken res) {
 // Пользователь успешно авторизовался
-                Toast.makeText(getApplicationContext(), "Authorithation complited...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Authorization  complited...", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(VKError error) {
 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-                Toast.makeText(getApplicationContext(), "ERROR ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Authorization ERROR ", Toast.LENGTH_SHORT).show();
 
             }
         })) {
@@ -67,34 +69,46 @@ public class MainActivity extends AppCompatActivity {
     //Обработчик кнопки
     public void onClick(View view) {
 
-        //Отправление запроса на вк сервер
-        VKRequest vkRequest = new VKApiWall()
-                .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 30, VKApiConst.FILTERS, "owner"));
-        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                try {
-                    //Чтение JSON объетка
-                    JSONObject jsonObject = (JSONObject) response.json.get("response");
-                    JSONArray jsonArray = (JSONArray) jsonObject.get("items");
-
-                    //Заполнение списка историями
-                    for (int i = 1; i < jsonArray.length(); i++) {
-                        JSONObject jobj = (JSONObject) jsonArray.get(i);
-                        stories.add("Моя история №" + i
-                                + ": \n " + jobj.getString("text"));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
+        new AsyncHelper().execute();
         // Переход на другую активность
-        Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-        startActivity(intent);
 
+
+    }
+
+    private class AsyncHelper extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //Отправление запроса на вк сервер
+            VKRequest vkRequest = new VKApiWall()
+                    .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 30, VKApiConst.FILTERS, "owner"));
+            vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    super.onComplete(response);
+                    try {
+                        //Чтение JSON объетка
+                        JSONObject jsonObject = (JSONObject) response.json.get("response");
+                        JSONArray jsonArray = (JSONArray) jsonObject.get("items");
+
+                        //Заполнение списка историями
+                        for (int i = 1; i < jsonArray.length(); i++) {
+                            JSONObject jobj = (JSONObject) jsonArray.get(i);
+                            stories.add("Моя история №" + i
+                                    + ": \n" + jobj.getString("text"));
+                            Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+                            startActivity(intent);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            });
+
+
+            return null;
+        }
     }
 }

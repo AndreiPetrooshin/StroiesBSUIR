@@ -1,5 +1,6 @@
 package com.example.draqo.andreipetrooshinpoms;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by draqo on 01.06.2017.
- */
 
 public class ViewActivity extends AppCompatActivity {
 
@@ -22,7 +20,9 @@ public class ViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_activity);
         linearLayout = (LinearLayout) findViewById(R.id.linear_stories);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         fillLayout();
+
 
 
     }
@@ -37,6 +37,7 @@ public class ViewActivity extends AppCompatActivity {
             if (!arrayList.get(i).equals("")) {
                 TextView textView = new TextView(getApplicationContext());
                 textView.setTextSize(20f);
+                textView.setTextColor(Color.WHITE);
                 textView.setShadowLayer(5f, 0f, 0f, Color.BLACK);
                 textView.setLayoutParams(layoutParams);
                 textView.setText(arrayList.get(i));
@@ -44,6 +45,4 @@ public class ViewActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

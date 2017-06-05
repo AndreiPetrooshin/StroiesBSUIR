@@ -6,9 +6,7 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
-/**
- * Created by draqo on 01.06.2017.
- */
+
 
 public class Application extends android.app.Application {
 
