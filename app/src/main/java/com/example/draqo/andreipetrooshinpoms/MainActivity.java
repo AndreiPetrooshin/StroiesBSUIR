@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.vk.sdk.VKAccessToken;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] scope = new String[]{VKScope.WALL};
     public static ArrayList<String> stories = new ArrayList<>();
+    private ProgressBar progressBar;
 
 
     @Override
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        progressBar = (ProgressBar) findViewById(R.id.prorgress_bar);
 
         //Предостовление прав пользователя
         VKSdk.login(this, scope);
@@ -66,10 +69,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     //Обработчик кнопки
     public void onClick(View view) {
 
         new AsyncHelper().execute();
+
         // Переход на другую активность
 
 
@@ -78,7 +85,15 @@ public class MainActivity extends AppCompatActivity {
     private class AsyncHelper extends AsyncTask<Void, Void, Void> {
 
         @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+
+
+        }
+
+        @Override
         protected Void doInBackground(Void... params) {
+
             //Отправление запроса на вк сервер
             VKRequest vkRequest = new VKApiWall()
                     .get(VKParameters.from(VKApiConst.OWNER_ID, String.valueOf(-33850608), VKApiConst.COUNT, 30, VKApiConst.FILTERS, "owner"));
@@ -96,19 +111,25 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jobj = (JSONObject) jsonArray.get(i);
                             stories.add("Моя история №" + i
                                     + ": \n" + jobj.getString("text"));
-                            Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-                            startActivity(intent);
                         }
+
+                        Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        startActivity(intent);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
+
             });
 
 
             return null;
         }
+
+
+
     }
 }
